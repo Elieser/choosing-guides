@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <info>
 	<infoitem key="UD_ToursMain" value="name:TourId;datatype:int,name:CountryId;datatype:int,name:StateId;datatype:int,name:LocationId;datatype:int,name:TourPrice;datatype:real,name:TourPicture;datatype:string,name:TourPictureName;datatype:string" />
+	<infoitem key="UD_TourPlaces" value="name:PlaceId;datatype:int,name:PlaceDesc;datatype:string,name:PlaceName;datatype:string,name:WebLanguageId;datatype:int,name:PicturePath;datatype:string,name:PictureName;datatype:string" />
 </info>

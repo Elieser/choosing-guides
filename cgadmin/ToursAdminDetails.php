@@ -35,12 +35,54 @@ $tour_Tours = "-1";
 if (isset($_GET['tour'])) {
   $tour_Tours = $_GET['tour'];
 }
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_POST["MM_insert"])) && ($_POST["MM_insert"] == "form2")) {
+  $insertSQL = sprintf("INSERT INTO tbltoursplaces (TourId, PlaceId) VALUES (%s, %s)",
+                       GetSQLValueString($tour_Tours, "int"),
+                       GetSQLValueString($_POST['PlaceId'], "int"));
+
+  mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
+  $Result1 = mysql_query($insertSQL, $ChoosingGuidesConnection) or die(mysql_error());
+
+  $insertGoTo = "ToursAdminDetails.php";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $insertGoTo .= (strpos($insertGoTo, '?')) ? "&" : "?";
+    $insertGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $insertGoTo));
+}
+
 
 mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
-$query_ToursMain = sprintf("SELECT tbltours.TourId, tbltours.CountryId, tbltours.StateId, tbltours.LocationId, tbltours.TourPrice, tbltours.TourPicture, tbltours.TourPictureName FROM tbltours WHERE tbltours.TourId=%s", GetSQLValueString($tour_Tours, "int"));
+$query_ToursMain = "SELECT tbltours.TourId, tbltours.CountryId, tbltours.StateId, tbltours.LocationId, tbltours.TourPrice, tbltours.TourPicture, tbltours.TourPictureName FROM tbltours WHERE tbltours.TourId=$tour_Tours";
 $ToursMain = mysql_query($query_ToursMain, $ChoosingGuidesConnection) or die(mysql_error());
 $row_ToursMain = mysql_fetch_assoc($ToursMain);
 $totalRows_ToursMain = mysql_num_rows($ToursMain);
+
+$weblanguage_TourPlaces = "-1";
+if (isset($_SESSION['MM_WebLanguageId'])) {
+  $weblanguage_TourPlaces = $_SESSION['MM_WebLanguageId'];
+}
+$tour_TourPlaces = "-1";
+if (isset($_GET['tour'])) {
+  $tour_TourPlaces = $_GET['tour'];
+}
+mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
+$query_TourPlaces = sprintf("SELECT tblplaces.PlaceId, CONVERT(tblplacesdet.PlaceDesc, char(290)) AS PlaceDesc, tblplacesdet.PlaceName, tblplacesdet.WebLanguageId, tblplacespictures.PicturePath, tblplacespictures.PictureName FROM tblplaces INNER JOIN tblplacesdet ON tblplaces.PlaceId = tblplacesdet.PlaceId LEFT OUTER JOIN tblplacespictures ON tblplaces.PlaceId = tblplacespictures.PlaceId INNER JOIN tbltoursplaces ON tblplaces.PlaceId = tbltoursplaces.PlaceId WHERE tblplacesdet.WebLanguageId=%s AND tbltoursplaces.TourId=%s GROUP BY tblplaces.PlaceId ORDER BY tbltoursplaces.TourPlaceId", GetSQLValueString($weblanguage_TourPlaces, "int"),GetSQLValueString($tour_TourPlaces, "int"));
+$TourPlaces = mysql_query($query_TourPlaces, $ChoosingGuidesConnection) or die(mysql_error());
+$row_TourPlaces = mysql_fetch_assoc($TourPlaces);
+$totalRows_TourPlaces = mysql_num_rows($TourPlaces);
+
+
+mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
+$query_SelectPlaces = sprintf("SELECT tblplaces.PlaceId, tblplacesdet.PlaceDesc, tblplacesdet.PlaceName, tblplacesdet.WebLanguageId, tbltours.TourId FROM tblplaces INNER JOIN tblplacesdet ON tblplaces.PlaceId = tblplacesdet.PlaceId INNER JOIN tbltours ON tblplaces.CountryId = tbltours.CountryId AND tblplaces.StateId = tbltours.StateId AND tblplaces.LocationId = tbltours.LocationId WHERE tbltours.TourId = %s AND tblplacesdet.WebLanguageId = %s and  tblplaces.PlaceId not in (select PlaceId from tbltoursplaces where tbltoursplaces.TourId=tbltours.TourId)", GetSQLValueString($tour_TourPlaces, "int"),GetSQLValueString($weblanguage_TourPlaces, "int"));
+$SelectPlaces = mysql_query($query_SelectPlaces, $ChoosingGuidesConnection) or die(mysql_error());
+$row_SelectPlaces = mysql_fetch_assoc($SelectPlaces);
+$totalRows_SelectPlaces = mysql_num_rows($SelectPlaces);
 
 $maxRows_Tours = 10;
 $pageNum_Tours = 0;
@@ -204,22 +246,48 @@ var ImageSlideShow = new Spry.Widget.ImageSlideShow("#ImageSlideShow", {
     
    
      <?php } while ($row_Tours = mysql_fetch_assoc($Tours)); 
-  
+  if ($totalRows_TourPlaces!=0){
   	do { ?>
-      <div class="placesList">    <div class="placeImage"> <a href="PlacesAdminDetails.php?place=<?php echo $row_Places['PlaceId']; ?>"><img src="<?php echo "../".$row_Places['PicturePath']; ?>" width="196" height="156" alt="<?php echo $row_Places['PictureName']; ?>" /></a> </div>
+    <div class="placesList">    <div class="placeImage"> <a href="PlacesAdminDetails.php?place=<?php echo $row_TourPlaces['PlaceId']; ?>"><img src="<?php echo "../".$row_TourPlaces['PicturePath']; ?>" width="196" height="156" alt="<?php echo $row_TourPlaces['PictureName']; ?>" /></a> </div>
         <div class="placeDesc"> 
         <div class="EditDelete">
         
-          <input name="Delete" type="button" onClick="MM_goToURL('parent','PlacesAdminDel.php?place=<?php echo $row_Places['PlaceId']; ?>');return document.MM_returnValue" value="Delete" />
+          <input name="Delete" type="button" onClick="MM_goToURL('parent','TourPlaceDel.php?tour=<?php echo $tour_TourPlaces; ?> & place=<?php echo $row_TourPlaces['PlaceId']; ?>');return document.MM_returnValue" value="Delete" />
           
 </div>
 
-          <h4><a href="PlacesAdminDetails.php?place=<?php echo $row_Places['PlaceId']; ?>"><?php echo $row_Places['PlaceName']; ?></a></h4>
-          <p class="placeDesc"><?php echo $row_Places['PlaceDesc']; ?> ...</p>
+          <h4><a href="PlacesAdminDetails.php?place=<?php echo $row_TourPlaces['PlaceId']; ?>"><?php echo $row_TourPlaces['PlaceName']; ?></a></h4>
+          <p class="placeDesc"><?php echo $row_TourPlaces['PlaceDesc']; ?> ...</p>
         </div>
       </div>
-      <?php } while ($row_Places = mysql_fetch_assoc($Places)); ?>
-<!-- InstanceEndEditable --><!-- end .content --></div>
+      <?php } while ($row_TourPlaces = mysql_fetch_assoc($TourPlaces)); }?>
+
+<?php  $selPlace=-1;
+  if (isset($_POST['selectplaces'])){
+	  $selPlace=$_POST['selectplaces'];
+  }?>
+<form action="<?php echo $editFormAction; ?>" method="post" name="form2" id="form2">
+  <table align="left">
+    <tr valign="baseline">
+      <td width="50" align="right" nowrap="nowrap">Place:</td>
+      <td><select name="PlaceId">
+        <?php 
+do {  
+?>
+        <option value="<?php echo $row_SelectPlaces['PlaceId']?>" ><?php echo $row_SelectPlaces['PlaceName']?></option>
+        <?php
+} while ($row_SelectPlaces = mysql_fetch_assoc($SelectPlaces));
+?>
+      </select>
+        <input type="submit" value="Add Place" /></td>
+    </tr>
+    <tr> </tr>
+    </table>
+  <input type="hidden" name="TourId" value="" />
+  <input type="hidden" name="MM_insert" value="form2" />
+</form>
+<p>&nbsp;</p>
+  <!-- InstanceEndEditable --><!-- end .content --></div>
   <div class="sidebar1">
     <p>Barra Lateral aaa</p>
   </div>
@@ -236,4 +304,8 @@ var MenuBar1 = new Spry.Widget.MenuBar("MenuBar1", {imgDown:"../SpryAssets/SpryM
 mysql_free_result($Tours);
 
 mysql_free_result($ToursMain);
+
+mysql_free_result($TourPlaces);
+
+mysql_free_result($SelectPlaces);
 ?>

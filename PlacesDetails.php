@@ -163,6 +163,16 @@ $Coments = mysql_query($query_Coments, $ChoosingGuidesConnection) or die(mysql_e
 $row_Coments = mysql_fetch_assoc($Coments);
 $totalRows_Coments = mysql_num_rows($Coments);
 
+$place_ToursPlace = "-1";
+if (isset($_GET['place'])) {
+  $place_ToursPlace = $_GET['place'];
+}
+mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
+$query_ToursPlace = sprintf("SELECT DISTINCT tbltoursdet.TourName, tblplaces.PlaceId, tbltoursplaces.TourId FROM tblplaces INNER JOIN tbltoursplaces ON tblplaces.PlaceId = tbltoursplaces.PlaceId INNER JOIN tbltoursdet ON tbltoursplaces.TourId = tbltoursdet.TourId WHERE tblplaces.PlaceId = %s", GetSQLValueString($place_ToursPlace, "int"));
+$ToursPlace = mysql_query($query_ToursPlace, $ChoosingGuidesConnection) or die(mysql_error());
+$row_ToursPlace = mysql_fetch_assoc($ToursPlace);
+$totalRows_ToursPlace = mysql_num_rows($ToursPlace);
+
 
 ?>
 <script type='text/javascript' 
@@ -298,7 +308,12 @@ var <?php echo "tool".$row_PlacePictures['PlacePictId']; ?> = new Spry.Widget.To
     <?php if ($row_Places['x']){?>
     <div class="placeDetailsDesc" id="mapCanvas" style="min-width:300px; min-height:300px"></div>
     <?php }?>
-   <?php if ($totalRows_Coments!=0){?>
+    <div class="placeDetailsDesc">
+    <?php do { ?>
+      <a href="ToursDetails.php?tour=<?php echo $row_ToursPlace['TourId']; ?>"><?php echo $row_ToursPlace['TourName']; ?></a>
+<?php } while ($row_ToursPlace = mysql_fetch_assoc($ToursPlace)); ?>
+</div>
+<?php if ($totalRows_Coments!=0){?>
     <h4>Comments </h4>
     <?php do { ?>
     <div class="placeDetailsCom">
@@ -441,6 +456,8 @@ var MenuBar1 = new Spry.Widget.MenuBar("MenuBar1", {imgDown:"../SpryAssets/SpryM
 <!-- InstanceEnd --></html>
 <?php
 mysql_free_result($Coments);
+
+mysql_free_result($ToursPlace);
 
 mysql_free_result($Places);
 

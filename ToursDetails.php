@@ -61,6 +61,19 @@ $ToursMain = mysql_query($query_ToursMain, $ChoosingGuidesConnection) or die(mys
 $row_ToursMain = mysql_fetch_assoc($ToursMain);
 $totalRows_ToursMain = mysql_num_rows($ToursMain);
 
+$weblanguage_TourPlaces = "-1";
+if (isset($_SESSION['MM_WebLanguageId'])) {
+  $weblanguage_TourPlaces = $_SESSION['MM_WebLanguageId'];
+}
+$tour_TourPlaces = "-1";
+if (isset($_GET['tour'])) {
+  $tour_TourPlaces = $_GET['tour'];
+}
+mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
+$query_TourPlaces = sprintf("SELECT tblplaces.PlaceId, CONVERT(tblplacesdet.PlaceDesc, char(290)) AS PlaceDesc, tblplacesdet.PlaceName, tblplacesdet.WebLanguageId, tblplacespictures.PicturePath, tblplacespictures.PictureName FROM tblplaces INNER JOIN tblplacesdet ON tblplaces.PlaceId = tblplacesdet.PlaceId LEFT OUTER JOIN tblplacespictures ON tblplaces.PlaceId = tblplacespictures.PlaceId INNER JOIN tbltoursplaces ON tblplaces.PlaceId = tbltoursplaces.PlaceId WHERE tblplacesdet.WebLanguageId=%s AND tbltoursplaces.TourId=%s GROUP BY tblplaces.PlaceId ORDER BY tbltoursplaces.TourPlaceId", GetSQLValueString($weblanguage_TourPlaces, "int"),GetSQLValueString($tour_TourPlaces, "int"));
+$TourPlaces = mysql_query($query_TourPlaces, $ChoosingGuidesConnection) or die(mysql_error());
+$row_TourPlaces = mysql_fetch_assoc($TourPlaces);
+$totalRows_TourPlaces = mysql_num_rows($TourPlaces);
 
 mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
 $query_Tours = sprintf("SELECT
@@ -188,7 +201,7 @@ var ImageSlideShow = new Spry.Widget.ImageSlideShow("#ImageSlideShow", {
   </div> 
   <div class="content"><!-- InstanceBeginEditable name="Body" -->
   <div class="placeMainImage">
-  <img src="<?php echo "../".$ToursMain['TourPicture']; ?>" alt="" name="mainimage" width="754" height="400" id="mainimage" />
+  <img src="<?php echo $row_ToursMain['TourPicture']; ?>" alt="" name="mainimage" width="754" height="400" id="mainimage" />
   </div>
   
     <?php do { ?>
@@ -199,11 +212,21 @@ var ImageSlideShow = new Spry.Widget.ImageSlideShow("#ImageSlideShow", {
     </div>
     
    
-     <?php } while ($row_Tours = mysql_fetch_assoc($Tours)); ?>
-  
-   <div class="mapa">
-     
-   </div>
+     <?php } while ($row_Tours = mysql_fetch_assoc($Tours)); 
+	 
+	   if ($totalRows_TourPlaces!=0){
+  	do { ?>
+    <div class="placesList">    <div class="placeImage"> <a href="PlacesDetails.php?place=<?php echo $row_TourPlaces['PlaceId']; ?>"><img src="<?php echo $row_TourPlaces['PicturePath']; ?>" width="196" height="156" alt="<?php echo $row_TourPlaces['PictureName']; ?>" /></a> </div>
+        <div class="placeDesc"> 
+        
+
+          <h4><a href="PlacesDetails.php?place=<?php echo $row_TourPlaces['PlaceId']; ?>"><?php echo $row_TourPlaces['PlaceName']; ?></a></h4>
+          <p class="placeDesc"><?php echo $row_TourPlaces['PlaceDesc']; ?> ...</p>
+        </div>
+      </div>
+      <?php } while ($row_TourPlaces = mysql_fetch_assoc($TourPlaces)); }?>
+
+   
   
   
  

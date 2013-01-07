@@ -103,10 +103,34 @@ if (isset($_POST['wordfilter'])) {
   $word_Tours = $_POST['wordfilter'];
 }
 
-$sorted_Tours = "TourId DESC";
+$sorted_Tours = "Rand()";
+$SortId=0;
+if (isset($_POST['queryorder'])){
+	$SortId=$_POST['queryorder'];
+}
+else
+{
+	if (isset($_SESSION['MM_SortId'])) {
+		$SortId=$_SESSION['MM_SortId'];
+	}
+	}
+
+	switch ($SortId){ 
+	case 0: $sorted_Tours = "Rand()";
+	break;
+	case 1: $sorted_Tours = "ClickCounter DESC";
+	break;
+	case 2: $sorted_Tours = "TourPrice";
+	break;
+	case 3: $sorted_Tours = "(select count(*) from tbltourcomments where TourId=tbltour.TourId) DESC";
+	break;
+	case 4: $sorted_Tours = "(select round(avg(Points),2) from tbltourcomments where TourId=tbltour.TourId) DESC";
+	break;
+	}
+
 
 mysql_select_db($database_ChoosingGuidesConnection, $ChoosingGuidesConnection);
-$query_Tours = sprintf("SELECT tblTours.TourId, tblToursdet.WebLanguageId, tblTours.CountryId, tblTours.StateId, tblTours.LocationId, tblTours.TourPicture, tblTours.TourPictureName, tblToursdet.TourName, CONVERT(tblToursdet.TourDesc, char(290)) AS TourDesc FROM tblTours LEFT OUTER JOIN tblToursdet ON tblTours.TourId = tblToursdet.TourId WHERE WebLanguageId = %s %s %s %s AND (tblToursdet.TourName like %s or tblToursdet.TourDesc like %s) GROUP BY tblTours.TourId ORDER BY %s", GetSQLValueString($WebLanguage_Tours, "int"),$country_Tours,$state_Tours,$location_Tours,GetSQLValueString("%" . $word_Tours . "%", "text"),GetSQLValueString("%" . $word_Tours . "%", "text"),$sorted_Tours);
+$query_Tours = sprintf("SELECT tblTours.TourId, tblToursdet.WebLanguageId, tblTours.CountryId, tblTours.StateId, tblTours.LocationId, tblTours.TourPrice, tblTours.TourPicture, tblTours.TourPictureName, tblToursdet.TourName, CONVERT(tblToursdet.TourDesc, char(290)) AS TourDesc FROM tblTours LEFT OUTER JOIN tblToursdet ON tblTours.TourId = tblToursdet.TourId WHERE WebLanguageId = %s %s %s %s AND (tblToursdet.TourName like %s or tblToursdet.TourDesc like %s) GROUP BY tblTours.TourId ORDER BY %s", GetSQLValueString($WebLanguage_Tours, "int"),$country_Tours,$state_Tours,$location_Tours,GetSQLValueString("%" . $word_Tours . "%", "text"),GetSQLValueString("%" . $word_Tours . "%", "text"),$sorted_Tours);
 
 $query_limit_Tours = sprintf("%s LIMIT %d, %d", $query_Tours, $startRow_Tours, $maxRows_Tours);
 $Tours = mysql_query($query_limit_Tours, $ChoosingGuidesConnection) or die(mysql_error());
@@ -279,10 +303,10 @@ var ImageSlideShow = new Spry.Widget.ImageSlideShow("#ImageSlideShow", {
 		{
 	
 	do { ?>
-      <div class="placesList">    <div class="placeImage"> <a href="ToursDetails.php?tour=<?php echo $row_Tours['TourId']; ?>"><img src="<?php echo "".$row_Tours['TourPicture']; ?>" width="196" height="156" alt="<?php echo $row_Tours['TourPictureName']; ?>" /></a> </div>
+      <div class="placesList">    <div class="placeImage"> <a href="ToursDetails.php?tour=<?php echo $row_Tours['TourId']; ?>"><img src="<?php echo $row_Tours['TourPicture']; ?>" width="196" height="156" alt="<?php echo $row_Tours['TourPictureName']; ?>" /></a> </div>
         <div class="PlaceDesc"> 
         <div class="EditDelete">
-        
+        Price: <?php echo $row_Tours['TourPrice']; ?>
           
           
 </div>
