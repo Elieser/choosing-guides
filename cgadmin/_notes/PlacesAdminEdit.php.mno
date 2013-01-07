@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Places" value="name:PlaceId;datatype:int,name:CountryId;datatype:int,name:StateId;datatype:int,name:LocationId;datatype:int,name:PlacePrice;datatype:real,name:x;datatype:real,name:y;datatype:real" />
+</info>

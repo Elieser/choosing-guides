@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_ToursMain" value="name:TourId;datatype:int,name:CountryId;datatype:int,name:StateId;datatype:int,name:LocationId;datatype:int,name:TourPrice;datatype:real,name:TourPicture;datatype:string,name:TourPictureName;datatype:string" />
+</info>

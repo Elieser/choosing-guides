@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Countries" value="name:CountryId;datatype:int,name:WebLanguageId;datatype:int,name:CountryName;datatype:string" />
+</info>

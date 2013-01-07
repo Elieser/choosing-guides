@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_locations" value="name:LocationId;datatype:int,name:StateId;datatype:int,name:CountryId;datatype:int,name:WebLanguageId;datatype:int,name:LocationName;datatype:string" />
+</info>

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Language" value="name:WebLanguageId;datatype:int,name:WebLanguageCode;datatype:string,name:WebLanguageName;datatype:string" />
+	<infoitem key="UD_PlaceLocation" value="name:CountryName;datatype:string,name:StateName;datatype:string,name:LocationName;datatype:string,name:PlaceId;datatype:int,name:WebLanguageId;datatype:int" />
+	<infoitem key="UD_TourLocation" value="name:CountryName;datatype:string,name:StateName;datatype:string,name:LocationName;datatype:string,name:TourId;datatype:int,name:WebLanguageId;datatype:int" />
+</info>

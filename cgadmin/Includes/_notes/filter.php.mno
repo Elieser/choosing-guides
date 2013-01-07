@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Sort" value="name:SortId;datatype:int,name:WebLanguageId;datatype:int,name:SortDesc;datatype:string,name:SortExpresion;datatype:string" />
+</info>

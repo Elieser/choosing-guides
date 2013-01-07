@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_WebLanguages" value="name:WebLanguageId;datatype:int,name:WebLanguageCode;datatype:string,name:WebLanguageName;datatype:string" />
+	<infoitem key="UD_WebLanguage" value="name:WebLanguageId;datatype:int,name:WebLanguageCode;datatype:string,name:WebLanguageName;datatype:string" />
+</info>

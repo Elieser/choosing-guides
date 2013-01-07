@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="MM_Session1" value="MM_WebLanguageId" />
+	<infoitem key="MM_Session_Count" value="6" />
+	<infoitem key="MM_Session2" value="MM_CountryId" />
+	<infoitem key="MM_Session3" value="MM_StateId" />
+	<infoitem key="MM_Session4" value="MM_LocationId" />
+	<infoitem key="MM_Session5" value="MM_SortId" />
+	<infoitem key="MM_Session6" value="MM_Word" />
+</info>

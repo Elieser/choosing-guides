@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Country" value="name:CountryId;datatype:int,name:WebLanguageId;datatype:int,name:CountryName;datatype:string" />
+	<infoitem key="UD_State" value="name:StateId;datatype:int,name:CountryId;datatype:int,name:WebLanguageId;datatype:int,name:StateName;datatype:string" />
+	<infoitem key="UD_Location" value="name:LocationId;datatype:int,name:StateId;datatype:int,name:CountryId;datatype:int,name:WebLanguageId;datatype:int,name:LocationName;datatype:string" />
+	<infoitem key="UD_WebLanguage" value="name:WebLanguageId;datatype:int,name:WebLanguageCode;datatype:string,name:WebLanguageName;datatype:string" />
+</info>
